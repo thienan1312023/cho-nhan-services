@@ -6,11 +6,14 @@ var gift = require('../../models/gift');
 // create catalog
 router.post('/add-gift', (req, res) => {    
     var giftNew = new gift({
-        imagePath: req.body.imagePath,
         title: req.body.title,
+        address: req.body.address,
+        note: req.body.note,    
+        imagePathList: req.body.imagePathList,
         description: req.body.description,
         categoryId: req.body.categoryId,
-        createdBy: "thienan",
+        catalogId: req.body.catalogId,
+        createdBy: "an.nguyen@gmail.com",
         updatedBy: "",
         createdAt: new Date(),
         updatedAt: ""
@@ -63,7 +66,6 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-    // debugger;
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
 
@@ -72,6 +74,15 @@ router.delete('/:id', (req, res) => {
         else { console.log('Error in gift Delete :' + JSON.stringify(err, undefined, 2)); }
     });
 });
-
-
+// get 8 newest items
+router.post('/get-new-gifts', (req, res) => {
+    gift.find({}, {}, {sort: {createdAt: -1}, limit: 8}, function(err, items){
+        if(!err){
+            res.send(items);
+        }
+        else{
+            console.log('Error in Retriving gift :' + JSON.stringify(err, undefined, 2));    
+        }
+    });
+});
 module.exports = router;
