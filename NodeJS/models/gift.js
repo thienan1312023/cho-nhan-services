@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var GiftSchema = new Schema({
+    userId: {type: String, required: true},
     title: {type: String, required: true},
     imagePathList: {type: Array, required: true},
     description: {type: String, required: true},
