@@ -2,9 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var CatalogSchema = new Schema({
-    catalogId: {type: String, required: true},
-    name: {type: String, required: true},
-    categoryIdList: {type: Array, required: true},
+    //catalogId: {type: String, required: true, unique: true},
+    catalogName: {type: String, required: true},
     imagePath:{type: String, required: true},
     linkDirect:{type: String, required: true},
     createdBy: {type: String, required: false},

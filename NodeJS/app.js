@@ -10,12 +10,7 @@ const validatorOptions = {
 };
 const cors = require('cors');
 //const { mongoose } = require('./db.js');
-mongoose.connect('mongodb://localhost:27017/GiftShareDB', (err) => {
-    if (!err)
-        console.log('MongoDB connection succeeded.');
-    else
-        console.log('Error in DB connection : ' + JSON.stringify(err, undefined, 2));
-});
+mongoose.connect('mongodb://thienan2211:passnpta2211@ds251210.mlab.com:51210/chonhandb', { useNewUrlParser: true }); 
 var app = express();
 var MongoStore = require('connect-mongo')(session);
 app.use(expressValidator(validatorOptions));
@@ -24,7 +19,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(cors({ origin: '*' }));
 
 app.listen(3001, () => console.log('Server started at port : 3001'));
 app.use('/api', require('./api/api'));

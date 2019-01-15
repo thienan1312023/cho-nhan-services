@@ -6,7 +6,7 @@ var { Category } = require('../../models/category');
 // create catalog
 router.post('/add-catagory', (req, res) => {
     
-    var catalogNew = new Catalog({
+    var categoryNew = new Catalog({
         detail: req.body.detail,
         catalogId: req.body.catalogId,
         title: req.body.title,
@@ -25,6 +25,9 @@ router.post('/add-catagory', (req, res) => {
     });
 })
 
+function createIdForAddNewCategory(){
+    
+}
 router.get('/', (req, res) => {
     Category.find((err, docs) => {
         if (!err) {
