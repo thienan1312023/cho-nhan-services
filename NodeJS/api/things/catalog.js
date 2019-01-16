@@ -18,15 +18,10 @@ router.get('/get-all-catalogs', (req, res) => {
 router.post('/add-catalog', (req, res) => {
     
     var catalogNew = new Catalog({
-        name: req.body.name,
-        categoryIdList: req.body.categoryIdList,
+        catalogName: req.body.name,
         imagePath: req.body.imagePath,
         catalogId: req.body.catalogId,
-        linkDirect: req.body.linkDirect,
-        createdBy: "thienan",
-        updatedBy: "",
-        createdAt: new Date(),
-        updatedAt: ""
+        linkDirect: req.body.linkDirect
     });
     catalogNew.save((err, doc) => {
         if (!err) { 

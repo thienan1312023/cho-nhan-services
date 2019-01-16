@@ -1,22 +1,16 @@
 const express = require('express');
 var router = express.Router();
 var ObjectId = require('mongoose').Types.ObjectId;
-var { Category } = require('../../models/category');
+var Category = require('../../models/category')
 
 // create catalog
-router.post('/add-catagory', (req, res) => {
+router.post('/add-category', (req, res) => {
     
-    var categoryNew = new Catalog({
-        detail: req.body.detail,
-        catalogId: req.body.catalogId,
-        title: req.body.title,
-        categoryId: req.body.categoryId,
-        createdBy: "thienan",
-        updatedBy: "",
-        createdAt: new Date(),
-        updatedAt: ""
+    var categoryNew = new Category({
+        categoryName: req.body.categoryName,
+        parentId: req.body.parentId
     });
-    catalogNew.save((err, doc) => {
+    categoryNew.save((err, doc) => {
         if (!err) { 
             res.send(doc); 
             console.log("Save successfully");

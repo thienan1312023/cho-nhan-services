@@ -10,7 +10,13 @@ const validatorOptions = {
 };
 const cors = require('cors');
 //const { mongoose } = require('./db.js');
-mongoose.connect('mongodb://thienan2211:passnpta2211@ds251210.mlab.com:51210/chonhandb', { useNewUrlParser: true }); 
+mongoose.connect('mongodb://thienan2211:passnpta2211@ds251210.mlab.com:51210/chonhandb', { useNewUrlParser: true }, function(error){
+  if(!error){
+    console.log("Connect Server mLab chonhanDB Successfully");
+  }else{
+    console.log("Has error when connect");
+  }
+}); 
 var app = express();
 var MongoStore = require('connect-mongo')(session);
 app.use(expressValidator(validatorOptions));

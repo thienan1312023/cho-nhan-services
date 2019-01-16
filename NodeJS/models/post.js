@@ -12,7 +12,7 @@ var PostSchema = new Schema({
     address: {type: Object, required: true},
     note: {type: String, required: true},
     categoryId: {type: String, required: false},
-    catalogId: {type: String, required: true},
+    catalogId: {type: Number, required: true},
     postStatus: {type: String, required: true, tolowercase: true},
     createdBy: {type: String,  required: false},
     updatedBy: {type: String, required: false},

@@ -1,90 +1,60 @@
-var express = require('express');
-var router = express.Router();
-var csrf = require('csurf');
-var passport = require('passport');
+const express = require('express');
+const User = require('../../models/user');
+const co = require('co');
+const loginValidator = require('../../shared/validations/login');
+const signupValidator = require('../../shared/validations/signup');
 
-// var Order = require('../models/order');
-// var Cart = require('../models/cart');
-var User = require('../../models/user');
+const router = express.Router();
 
-var csrfProtection = csrf();
+router.post('/signup', (req, res, next) => {
+  const { username, password } = req.body;
+  const { isValid, errors } = signupValidator(req.body);
 
-router.post('/removeUser', function(req, res, next) {
-  User.findOneAndRemove({email: req.user.email}, function(err, success) {
-    if(err) {
-      console.log(err.message);
-      req.flash('error', 'Falha ao remover usuário!');
-    }
-    if(success) {
-      req.flash('success', 'Usuário removido com sucesso!');
-      res.redirect('/');
-    }
-  });
-});
-
-router.get('/logout', isLoggedIn, function(req, res, next){
-  req.logout();
-  res.redirect();
-});
-
-router.get('/signup', function(req, res, next){
-  var messages = req.flash('error');
-  res.render('user/signup', {
-    crsfToken: req.csrfToken(),
-    messages: messages,
-    hasErrors: messages.length > 0
-  });
-});
-
-router.post('/signup', passport.authenticate('local.signup', {
-  failureRedirect: '/user/signup',
-  failureFlash: true
-}), function(req, res, next){
-  if(req.session.oldUrl){
-    var oldUrl = req.session.oldUrl;
-    req.session.old = null;
-    res.redirect(oldUrl);
-  }else{
-    res.redirect('/user/profile');
+  if (!isValid) {
+    return res.status(400).json({ error: true, errors });
   }
-});
-router.get('signin', function(req, res, next){
-  var messages = req.flash('error');
-  res.render('user/signin',{
-    csrfToken: req.csrfToken(),
-    messages: messages,
-    hasErrors: messages.length > 0
-  });
+
+  co(function* () {
+    const existingUser = yield User.findOne({ username });
+
+    if (existingUser) {
+      const error = { status: 400, errors: { username: 'Username already exists' } };
+      throw error;
+    }
+
+    const user = new User({ username, password });
+    return user.save();
+  })
+  .then(user => res.json({ username: user.username, access_token: user.access_token }))
+  .catch(err => next(err));
 });
 
-router.post('/sigin', passport.authenticate('local.sigin', {
-  failureRedirect: '/user/signin',
-  failureFlash: true
-}), function(req, res, next){
-  if(req.session.oldUrl){
-    var oldUrl = req.session.oldUrl;
-    req.session.oldUrl = null;
-    res.redirect(oldUrl);
-  }else{
-    res.redirect('/user/profile');
+router.post('/login', (req, res, next) => {
+  const { username, password } = req.body;
+  const { isValid, errors } = loginValidator(req.body);
+
+  if (!isValid) {
+    return res.status(400).json({ error: true, errors });
   }
+
+  co(function* () {
+    const user = yield User.findOne({ username });
+    if (!user) {
+      const error = { status: 401, errors: { username: 'Invalid username' } };
+      throw error;
+    }
+
+    const isMatch = yield user.comparePassword(password);
+    if (!isMatch) {
+      const error = { status: 401, errors: { password: 'Invalid password' } };
+      throw error;
+    }
+
+    return user;
+  })
+  .then(user => res.json({ username: user.username, access_token: user.access_token }))
+  .catch(err => next(err));
 });
 
-router.use('/', notLoggedIn, function(req, res, next){
-  next();
-});
 module.exports = router;
 
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-    return next();
-  }
-  res.redirect('/');
-}
-
-function notLoggedIn(req, res, next){
-  if(!req.isAuthenticated()){
-    return next();
-  }
-  res.redirect('/');
-}
