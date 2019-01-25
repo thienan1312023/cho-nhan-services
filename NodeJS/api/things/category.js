@@ -19,9 +19,6 @@ router.post('/add-category', (req, res) => {
     });
 })
 
-function createIdForAddNewCategory(){
-    
-}
 router.get('/', (req, res) => {
     Category.find((err, docs) => {
         if (!err) {

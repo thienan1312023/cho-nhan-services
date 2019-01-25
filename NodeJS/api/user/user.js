@@ -43,48 +43,120 @@ router.post('/signup', (req, res, next) => {
     
 
 
-router.post('/login', (req, res, next) => {
-  User.find({ contactIdentity: req.body.contactIdentity })
-  .exec()
-  .then(user => {
-    if (user.length < 1) {
-      return res.status(401).json({
-        message: "Auth failed"
+router.post('/login', async (req, res, next) => {
+  let user;
+  try {
+    user = await User.findOne({ contactIdentity: req.body.contactIdentity });
+    if(user){
+      let comparePassword = await bcrypt.compare(req.body.password, user.password);
+      if(comparePassword){
+      const token = await jwt.sign(
+        {
+          contactIdentity: req.contactIdentity,
+          //userId: user[0]._id
+        },
+        process.env.JWT_SECRET_KEY,
+        {
+            expiresIn: "1h"
+        }
+      );
+      return res.status(200).json({
+        message: "Auth successful",
+        token: token
       });
     }
-    bcrypt.compare(req.body.password, user[0].password, (err, result) => {
-      if (err) {
-        return res.status(401).json({
-          message: "Auth failed"
-        });
-      }
-      if (result) {
-        const token = jwt.sign(
-          {
-            email: user[0].contactIdentity,
-            userId: user[0]._id
-          },
-          process.env.JWT_PRIVATE_KEY,
-          {
-              expiresIn: "1h"
-          }
-        );
-        return res.status(200).json({
-          message: "Auth successful",
-          token: token
-        });
-      }
-      res.status(401).json({
-        message: "Auth failed"
-      });
+    }
+  } catch (err) {
+    res.status(401).json({
+      message: "Login Failed"
     });
-  })
-  .catch(err => {
-    console.log(err);
-    res.status(500).json({
-      error: err
-    });
-  });
+  }
+  // if(user){
+  // bcrypt.compare(req.body.password, '$2a$10$NFw1CTOBGsDvD4QbZCB9R.VlEJtzBwupwHrQj7oNIWHEQlmwcWThu').then((result) => {
+  //   const token = jwt.sign(
+  //     {
+  //       contactIdentity: req.contactIdentity,
+  //       //userId: user[0]._id
+  //     },
+  //     process.env.JWT_SECRET_KEY,
+  //     {
+  //         expiresIn: "1h"
+  //     }
+  //   );
+  //   return res.status(200).json({
+  //     message: "Auth successful",
+  //     token: token
+  //   });
+  // })
+  // .catch(err =>{
+  //   return res.status(401).json({
+  //           message: "Auth failed"
+  //         });
+  // });
+  //}
+  // User.find({ contactIdentity: req.body.contactIdentity })
+  // .exec()
+  // .then(user => {
+  //   if (user.length < 1) {
+  //     return res.status(401).json({
+  //       message: "Auth failed"
+  //     });
+  //   }
+  //   bcrypt.compare(req.body.password, user[0].password).then((result) => {
+  //     const token = jwt.sign(
+  //       {
+  //         email: user[0].contactIdentity,
+  //         userId: user[0]._id
+  //       },
+  //       process.env.JWT_SECRET_KEY,
+  //       {
+  //           expiresIn: "1h"
+  //       }
+  //     );
+  //     return res.status(200).json({
+  //       message: "Auth successful",
+  //       token: token
+  //     });
+  //   })
+  //   .catch(err =>{
+  //     return res.status(401).json({
+  //             message: "Auth failed"
+  //           });
+  //   });
+    //});
+    // bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+    //   if (err) {
+    //     return res.status(401).json({
+    //       message: "Auth failed"
+    //     });
+    //   }
+    //   if (result) {
+    //     const token = jwt.sign(
+    //       {
+    //         email: user[0].contactIdentity,
+    //         userId: user[0]._id
+    //       },
+    //       process.env.JWT_SECRET_KEY,
+    //       {
+    //           expiresIn: "1h"
+    //       }
+    //     );
+    //     return res.status(200).json({
+    //       message: "Auth successful",
+    //       token: token
+    //     });
+    //   }
+    //   res.status(401).json({
+    //     message: "Auth failed"
+    //   });
+    // });
+  // })
+  // .catch(err => {
+  //   console.log(err);
+  //   res.status(500).json({
+  //     error: err
+  //   });
+   //});
 });
 
 module.exports = router;
