@@ -9,6 +9,7 @@ var PostSchema = new Schema({
     imagePathList: {type: Array, required: true},
     description: {type: String, required: true},
     title:{type: String, required:true},
+    phoneNumber: {type: String, required: true},
     address: {type: Object, required: true},
     note: {type: String, required: true},
     categoryId: {type: String, required: false},

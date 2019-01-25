@@ -27,7 +27,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(cors({ origin: '*' }));
 
-app.listen(3001, () => console.log('Server started at port : 3001'));
+app.listen(3004, () => console.log('Server started at port : 3004'));
 app.use('/api', require('./api/api'));
 app.use(session({
     secret: 'mysupersecret', 

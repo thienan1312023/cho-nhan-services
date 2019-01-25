@@ -12,6 +12,7 @@ router.post('/add-post', (req, res) => {
         description: req.body.description,
         title: req.body.title,
         address: req.body.address,
+        phoneNumber: req.body.phoneNumber,
         note: req.body.note,    
         categoryId: req.body.categoryId,
         catalogId: req.body.catalogId,

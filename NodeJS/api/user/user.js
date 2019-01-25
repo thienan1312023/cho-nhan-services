@@ -1,59 +1,90 @@
 const express = require('express');
 const User = require('../../models/user');
-const co = require('co');
+const jwt = require('jsonwebtoken');
+var bcrypt = require('bcryptjs');
+require('dotenv').config();
 const loginValidator = require('../../shared/validations/login');
 const signupValidator = require('../../shared/validations/signup');
 
 const router = express.Router();
 
 router.post('/signup', (req, res, next) => {
-  const { username, password } = req.body;
-  const { isValid, errors } = signupValidator(req.body);
-
+  const {isValid, errors } = signupValidator(req.body);
   if (!isValid) {
     return res.status(400).json({ error: true, errors });
   }
-
-  co(function* () {
-    const existingUser = yield User.findOne({ username });
-
-    if (existingUser) {
-      const error = { status: 400, errors: { username: 'Username already exists' } };
-      throw error;
-    }
-
-    const user = new User({ username, password });
-    return user.save();
-  })
-  .then(user => res.json({ username: user.username, access_token: user.access_token }))
-  .catch(err => next(err));
+    var userNew = new User({
+      lastName: req.body.lastName,
+      firstName: req.body.firstName,
+      password: req.body.password,
+      contactIdentity: req.body.contactIdentity,
+      favoritePosts: req.body.favoritePosts
+    });
+    var salt = bcrypt.genSaltSync(10);
+    bcrypt.hash(userNew.password, salt, function(err, hash) {
+          if(err) return next(err);
+          userNew.password = hash;
+          userNew
+              .save()
+              .then(result => {
+                console.log(result);
+                res.status(201).json({
+                  message: "User created"
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                  error: err
+                });
+              });
+      });
 });
+    
+
 
 router.post('/login', (req, res, next) => {
-  const { username, password } = req.body;
-  const { isValid, errors } = loginValidator(req.body);
-
-  if (!isValid) {
-    return res.status(400).json({ error: true, errors });
-  }
-
-  co(function* () {
-    const user = yield User.findOne({ username });
-    if (!user) {
-      const error = { status: 401, errors: { username: 'Invalid username' } };
-      throw error;
+  User.find({ contactIdentity: req.body.contactIdentity })
+  .exec()
+  .then(user => {
+    if (user.length < 1) {
+      return res.status(401).json({
+        message: "Auth failed"
+      });
     }
-
-    const isMatch = yield user.comparePassword(password);
-    if (!isMatch) {
-      const error = { status: 401, errors: { password: 'Invalid password' } };
-      throw error;
-    }
-
-    return user;
+    bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+      if (err) {
+        return res.status(401).json({
+          message: "Auth failed"
+        });
+      }
+      if (result) {
+        const token = jwt.sign(
+          {
+            email: user[0].contactIdentity,
+            userId: user[0]._id
+          },
+          process.env.JWT_PRIVATE_KEY,
+          {
+              expiresIn: "1h"
+          }
+        );
+        return res.status(200).json({
+          message: "Auth successful",
+          token: token
+        });
+      }
+      res.status(401).json({
+        message: "Auth failed"
+      });
+    });
   })
-  .then(user => res.json({ username: user.username, access_token: user.access_token }))
-  .catch(err => next(err));
+  .catch(err => {
+    console.log(err);
+    res.status(500).json({
+      error: err
+    });
+  });
 });
 
 module.exports = router;

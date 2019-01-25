@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-//require('dotenv').config();
+require('dotenv').config();
 
 module.exports = function (req, res, next) {
   const token = req.headers.authorization;
@@ -18,9 +18,7 @@ module.exports = function (req, res, next) {
             const err = { status: 404, message: 'No such user' };
             throw err;
           }
-
-          const { userName, _id } = user;
-          req.currentUser = { userName, _id };
+          req.currentUser = user;
 
           return next();
         })
