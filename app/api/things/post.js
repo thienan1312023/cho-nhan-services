@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 // create catalog
 router.post('/add-post', (req, res) => {    
     var postNew = new post({
-        user:  new mongoose.Types.ObjectId(),
+        user:  ObjectId(req.currentUserId),
         postType: req.body.postType,
         userType: req.body.userType,
         imagePathList: req.body.imagePathList,
@@ -17,7 +17,7 @@ router.post('/add-post', (req, res) => {
         categoryId: req.body.categoryId,
         catalogId: req.body.catalogId,
         postStatus: req.body.postStatus,
-        createdBy: "",
+        createdBy: req.currentUserId,
         updatedBy: "",
         createdAt: new Date(),
         updatedAt: ""
