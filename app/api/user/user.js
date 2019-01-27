@@ -5,7 +5,6 @@ var bcrypt = require('bcryptjs');
 require('dotenv').config();
 const loginValidator = require('../../shared/validations/login');
 const signupValidator = require('../../shared/validations/signup');
-
 const router = express.Router();
 
 router.post('/signup', (req, res, next) => {

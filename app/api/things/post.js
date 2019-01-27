@@ -2,6 +2,7 @@ const express = require('express');
 var router = express.Router();
 var post = require('../../models/post');
 const mongoose = require('mongoose');
+var ObjectId = require('mongoose').Types.ObjectId;
 // create catalog
 router.post('/add-post', (req, res) => {    
     var postNew = new post({
