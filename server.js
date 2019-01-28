@@ -6,6 +6,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
 const PORT = process.env.PORT || 3004;
+const cors = require('cors');
 const validatorOptions = {
 
 };
@@ -27,6 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.listen(PORT, () => console.log('Server started at port in env'));
 app.use('/api', require('./app/api/api'));
+app.use(cors({ origin: '*' }));
 app.use(session({
     secret: 'mysupersecret', 
     resave: false, 
