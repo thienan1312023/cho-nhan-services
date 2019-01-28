@@ -3,7 +3,6 @@ var router = express.Router();
 var post = require('../../models/post');
 const mongoose = require('mongoose');
 var ObjectId = require('mongoose').Types.ObjectId;
-// create catalog
 router.post('/add-post', (req, res) => {    
     var postNew = new post({
         user:  ObjectId(req.currentUserId),
@@ -40,7 +39,10 @@ router.get('/', (req, res) => {
         else { 
             console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2)); 
         }
-    });
+    }).populate('user').exec(function (err, post) {
+        if(err) throw err;
+            console.log(post);
+        });;
     
 });
 
