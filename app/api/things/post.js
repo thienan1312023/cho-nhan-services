@@ -1,6 +1,7 @@
 const express = require('express');
 var router = express.Router();
 var post = require('../../models/post');
+var catalog = require('../../models/catalog');
 const mongoose = require('mongoose');
 var ObjectId = require('mongoose').Types.ObjectId;
 router.post('/add-post', (req, res) => {    
@@ -46,14 +47,17 @@ router.get('/', (req, res) => {
     
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async(req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
 
-    post.findById(req.params.id, (err, doc) => {
-        if (!err) { res.send(doc); }
-        else { console.log('Error in Retriving Employee :' + JSON.stringify(err, undefined, 2)); }
-    });
+    var postItem = await post.findById(req.params.id);
+    var postCustom = postItem.toObject();
+    if(postItem){
+        var catalogItem = await catalog.findOne({'catalogId': postItem.catalogId});
+        postCustom.catalogName = catalogItem.catalogName;
+        res.send(postCustom);  
+    }
 });
 // update post
 router.put('/:id', (req, res) => {

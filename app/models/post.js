@@ -2,6 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var validate = require('mongoose-validator');
 var user = require('./user');// create catalog
+var user = require('./catalog');// create catalog
+
 var PostSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref: 'user', required: true},
     postType: {type: String, required: true, lowercase: true},
@@ -13,7 +15,7 @@ var PostSchema = new Schema({
     address: {type: Object, required: true},
     note: {type: String, required: true},
     categoryId: {type: String, required: false},
-    catalogId: {type: Number, required: true},
+    catalogId: {type: Number, required: true, ref:'catalog', required: true},
     postStatus: {type: String, required: true, tolowercase: true},
     createdBy: {type: String,  required: true},
     updatedBy: {type: String, required: false},
