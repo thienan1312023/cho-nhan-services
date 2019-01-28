@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var userSchema = new Schema({
     firstName: {type: String, required: true}, // Ten
     lastName: {type: String, required: true}, // Ho
-    contactIdentity:{type: Object, required: true},
+    contactIdentity:{type: Object, required: true, unique: true},
     password: {type: String, required: true},
     favoritePosts: {type: Array, required: false},
     createdBy: {type: String,  required: false},
@@ -13,7 +13,6 @@ var userSchema = new Schema({
     createdAt:{type: Date, default: Date.now(),required: true},
     updatedAt: {type: Date, required: false}
 });
-
 
 // userSchema.methods.comparePassword = function(candidatePassword){
 //     return new Promise((resolve, reject) =>{
