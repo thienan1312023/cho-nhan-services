@@ -36,8 +36,13 @@ module.exports = function validateInput(data) {
   if (Validator.isEmpty(data.password || '')) {
     errors.password = 'Password is required';
   }
-
-  if (!Validator.isLength(data.password, { min: 6, max: 64 })) {
+  if(/^\d+$/.test(data.password)){
+    errors.password = 'Password must be at least 1 letter';
+  }
+  if(!(/\d/.test(data.password))){
+    errors.password = 'Password must be at least 1 number';
+  }
+  if (!Validator.isLength(data.password, { min: 8, max: 70 })) {
     errors.password = 'Password must be at least 6 characters';
   }
 
