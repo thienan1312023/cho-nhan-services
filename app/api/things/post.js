@@ -96,4 +96,10 @@ router.post('/get-new-posts', (req, res) => {
         }
     });
 });
+// get item in catalog by catalogId
+router.get('/get-catalog-posts/:id', (req, res) => {
+    post.find({'catalogId': req.params.id}, (err, docs) =>{
+        
+    });
+});
 module.exports = router;
