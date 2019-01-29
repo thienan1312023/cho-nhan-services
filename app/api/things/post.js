@@ -40,24 +40,31 @@ router.get('/', (req, res) => {
         else { 
             console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2)); 
         }
-    }).populate('user').exec(function (err, post) {
-        if(err) throw err;
-            console.log(post);
-        });;
-    
+    }); 
 });
 
-router.get('/:id', async(req, res) => {
+router.get('/:id', (req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
 
-    var postItem = await post.findById(req.params.id);
-    var postCustom = postItem.toObject();
-    if(postItem){
-        var catalogItem = await catalog.findOne({'catalogId': postItem.catalogId});
-        postCustom.catalogName = catalogItem.catalogName;
-        res.send(postCustom);  
-    }
+    post.findById(req.params.id).populate('user').exec(function (err, post) {    
+        if(!err){
+            var postCustom = post.toObject();
+            if(post){
+                catalog.findOne({'catalogId': post.catalogId}).exec(function (err, catalog){
+                    if(catalog){
+                    postCustom.catalogName = catalog.catalogName;
+                    res.send(postCustom);
+                    }
+                    else{
+                        res.send(err);
+                    }      
+                });
+            }
+        }else{
+            console.log(post);
+        }
+    });
 });
 // update post
 router.put('/:id', (req, res) => {
