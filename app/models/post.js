@@ -23,5 +23,6 @@ var PostSchema = new Schema({
     updatedAt: {type: Date, required: false},    
 });
 
+PostSchema.index({title: "text"});
 module.exports = mongoose.model('Post', PostSchema);
 

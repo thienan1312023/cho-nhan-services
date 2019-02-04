@@ -6,6 +6,7 @@ var userSchema = new Schema({
     firstName: {type: String, required: true}, // Ten
     lastName: {type: String, required: true}, // Ho
     contactIdentity:{type: Object, required: true, unique: true},
+    profileImagePath:{type: Object, required: true},
     password: {type: String, required: true},
     favoritePosts: {type: Array, required: false},
     createdBy: {type: String,  required: false},
