@@ -39,11 +39,11 @@ router.post('/add-post', requireAuth, (req, res) => {
 
 router.get('/', (req, res) => {
     const { page, perPage } = req.query;
-      const options = {
+    const options = {
         page: parseInt(page, 10) || 1,
         limit: parseInt(perPage, 10) || 20,
-      };
-    post.paginate({}, options, function(err, posts) {
+    };
+    post.paginate({}, options, function (err, posts) {
         if (!err) {
             var objResult = {
                 posts: posts.docs,
@@ -130,10 +130,10 @@ router.get('/get-catalog-posts/:id', (req, res) => {
 
 router.get("/search-posts/", async function (req, res) {
     const { page, perPage } = req.query;
-      const options = {
+    const options = {
         page: parseInt(page, 10) || 1,
-        limit: parseInt(perPage, 10) || 20,
-      };
+        perPage: parseInt(perPage, 10) || 20,
+    };
     var query = {};
     var isExistCategorySearch = false;
     for (var key in req.body) { //could also be req.query and req.params
@@ -159,23 +159,43 @@ router.get("/search-posts/", async function (req, res) {
                 var arrCategoryId = [];
                 arrCategoryId = categories.map(x => x.categoryId);
                 arrCategoryId.push(req.body.categoryId);
-                post.find(query).where('categoryId').in(arrCategoryId).exec(function (err, posts) {
-                    if (!err) {
-                        res.send(posts);
-                    } else {
-                        console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
-                    }
-                });
+                post.countDocuments().exec(function (err, count) {
+                    var totalPages = Math.ceil(count / options.perPage);
+                    post.find(query).where('categoryId').in(arrCategoryId)
+                        .limit(options.perPage)
+                        .skip(options.page * options.perPage)
+                        .sort({ title: 'asc' })
+                        .exec(function (err, posts) {
+                            if (!err) {
+                                var objResult = {
+                                    posts: posts,
+                                    totalPages: totalPages
+                                }
+                                res.send(objResult);
+                            } else {
+                                console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
+                            }
+                        });
+                })
+
+
             } else {
             }
         });
     } else {
-        post.find(query).exec(function (err, posts) {
-            if (!err) {
-                res.send(posts);
-            } else {
-                console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
-            }
+        post.countDocuments().exec(function (err, count) {
+            var totalPages = Math.ceil(count / options.perPage);
+            post.find(query).exec(function (err, posts) {
+                if (!err) {
+                    var objResult = {
+                        posts: posts,
+                        totalPages: totalPages
+                    }
+                    res.send(objResult);
+                } else {
+                    console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
+                }
+            });
         });
     }
 
