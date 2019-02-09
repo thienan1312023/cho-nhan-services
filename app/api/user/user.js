@@ -52,7 +52,9 @@ router.post('/login', async (req, res, next) => {
       const token = await jwt.sign(
         {
           contactIdentity: user.contactIdentity,
-          userId: user._id
+          userId: user._id,
+          fullName:  user.lastName + " "+ user.firstName,
+          profileImagePath:  user.profileImagePath
         },
         process.env.JWT_SECRET_KEY,
         {

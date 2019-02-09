@@ -129,6 +129,11 @@ router.get('/get-catalog-posts/:id', (req, res) => {
 });
 
 router.get("/search-posts/", async function (req, res) {
+    const { page, perPage } = req.query;
+      const options = {
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(perPage, 10) || 20,
+      };
     var query = {};
     var isExistCategorySearch = false;
     for (var key in req.body) { //could also be req.query and req.params
