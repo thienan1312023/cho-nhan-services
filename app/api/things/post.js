@@ -41,7 +41,7 @@ router.get('/', (req, res) => {
     const { page, perPage } = req.query;
       const options = {
         page: parseInt(page, 10) || 1,
-        limit: parseInt(perPage, 10) || 10,
+        limit: parseInt(perPage, 10) || 20,
       };
     post.paginate({}, options, function(err, posts) {
         if (!err) {
