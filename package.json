@@ -32,6 +32,7 @@
     "jwt-decode": "^2.2.0",
     "mongoose": "^5.4.4",
     "mongoose-auto-increment": "^5.0.1",
+    "mongoose-paginate": "^5.0.3",
     "mongoose-validator": "^2.1.0",
     "passport": "^0.4.0",
     "request": "^2.88.0",

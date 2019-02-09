@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const global = require('../../global');
 var ObjectId = require('mongoose').Types.ObjectId;
 const requireAuth = require('../../middlewares/require_authentication');
+var mongoosePaginate = require('mongoose-paginate');
 //const postsController = require('../../controllers/posts-controller'); 
 router.post('/add-post', requireAuth, (req, res) => {
     var postNew = new post({
@@ -37,9 +38,18 @@ router.post('/add-post', requireAuth, (req, res) => {
 });
 
 router.get('/', (req, res) => {
-    post.find((err, docs) => {
+    const { page, perPage } = req.query;
+      const options = {
+        page: parseInt(page, 10) || 1,
+        limit: parseInt(perPage, 10) || 10,
+      };
+    post.paginate({}, options, function(err, posts) {
         if (!err) {
-            res.send(docs);
+            var objResult = {
+                posts: posts.docs,
+                totalPages: posts.pages
+            }
+            res.send(objResult);
         }
         else {
             console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
