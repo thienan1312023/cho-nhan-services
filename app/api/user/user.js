@@ -32,7 +32,6 @@ router.post('/signup', (req, res, next) => {
                 });
               })
               .catch(err => {
-                console.log(err);
                 if(err.code === 11000){
                   res.status(409);
                 }else{
@@ -69,6 +68,10 @@ router.post('/login', async (req, res, next) => {
         token: token
       });
     }
+    }else{
+      res.status(401).json({
+        message: "Login Failed"
+      });  
     }
   } catch (err) {
     res.status(401).json({
