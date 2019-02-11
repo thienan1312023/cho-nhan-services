@@ -33,10 +33,8 @@ router.post('/signup', (req, res, next) => {
               })
               .catch(err => {
                 console.log(err);
-                var statusErr = err.code || 500;
-                res.status(statusErr).json({
-                  error: err
-                });
+                res.status(500);
+                res.render('error', { error: err });
               });
       });
 });
