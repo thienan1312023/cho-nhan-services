@@ -2,7 +2,7 @@ const express = require('express');
 var router = express.Router();
 var ObjectId = require('mongoose').Types.ObjectId;
 var Catalog  = require('../../models/catalog');
-
+const requireAuth = require('../../middlewares/require_authentication');
 router.get('/get-all-catalogs', (req, res) => {
     Catalog.find((err, docs) => {
         if (!err) {
@@ -15,7 +15,7 @@ router.get('/get-all-catalogs', (req, res) => {
     
 });
 // create catalog
-router.post('/add-catalog', (req, res) => {
+router.post('/add-catalog', requireAuth,  (req, res) => {
     
     var catalogNew = new Catalog({
         catalogId: req.body.catalogId,
@@ -39,7 +39,7 @@ router.get('/:id', (req, res) => {
     });
 });
 // update catalog
-router.put('/:id', async(req, res) => {
+router.put('/:id', requireAuth, async(req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
         var ExistProduct = await Catalog.findById(req.params.id);
@@ -55,7 +55,7 @@ router.put('/:id', async(req, res) => {
     });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', requireAuth, (req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
 
