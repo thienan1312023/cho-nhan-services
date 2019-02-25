@@ -128,7 +128,7 @@ router.get('/get-similar-posts/:id', (req, res) => {
     });
 });
 
-router.get("/search-posts/", async function (req, res) {
+router.post("/search-posts/", async function (req, res) {
     const { page, perPage } = req.query;
     const options = {
         page: parseInt(page, 10) || 1,
@@ -141,7 +141,7 @@ router.get("/search-posts/", async function (req, res) {
             if (key === "provinceCityId" || key === "districtTownId") {
                 var keyAlterName = 'address' + '.' + key;
                 query[keyAlterName] = req.body[key];
-            } else if (key !== "title") {
+            } else if (key !== "title" && key !== "") {
                 query[key] = req.body[key];
             } else {
                 const regex = new RegExp(global.escapeRegex(req.body[key]), 'gi');
