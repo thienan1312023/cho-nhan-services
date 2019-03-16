@@ -185,17 +185,31 @@ router.post("/search-posts/", async function (req, res) {
     } else {
         post.countDocuments().exec(function (err, count) {
             var totalPages = Math.ceil(count / options.perPage);
-            post.find(query).exec(function (err, posts) {
-                if (!err) {
-                    var objResult = {
-                        posts: posts,
-                        totalPages: totalPages
+            if (Object.keys(query).length) {
+                post.find(query).exec(function (err, posts) {
+                    if (!err) {
+                        var objResult = {
+                            posts: posts,
+                            totalPages: totalPages
+                        }
+                        res.send(objResult);
+                    } else {
+                        console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
                     }
-                    res.send(objResult);
-                } else {
-                    console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
-                }
-            });
+                });
+            }else{
+                post.find().exec(function (err, posts) {
+                    if (!err) {
+                        var objResult = {
+                            posts: posts,
+                            totalPages: totalPages
+                        }
+                        res.send(objResult);
+                    } else {
+                        console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
+                    }
+                });
+            }
         });
     }
 
