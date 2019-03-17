@@ -5,12 +5,12 @@ const catalog = require('../../models/catalog');
 const category = require('../../models/category');
 const mongoose = require('mongoose');
 const global = require('../../global');
-var ObjectId = require('mongoose').Types.ObjectId;
+let ObjectId = require('mongoose').Types.ObjectId;
 const requireAuth = require('../../middlewares/require_authentication');
-var mongoosePaginate = require('mongoose-paginate');
+let mongoosePaginate = require('mongoose-paginate');
 //const postsController = require('../../controllers/posts-controller'); 
 router.post('/add-post', requireAuth, (req, res) => {
-    var postNew = new post({
+    let postNew = new post({
         user: ObjectId(req.currentUserId),
         postType: req.body.postType,
         userType: req.body.userType,
@@ -45,7 +45,7 @@ router.get('/', (req, res) => {
     };
     post.paginate({}, options, function (err, posts) {
         if (!err) {
-            var objResult = {
+            let objResult = {
                 posts: posts.docs,
                 totalPages: posts.pages
             }
@@ -63,7 +63,7 @@ router.get('/search-by-id/:id', (req, res) => {
 
     post.findById(req.params.id).populate('user').exec(function (err, post) {
         if (!err) {
-            var postCustom = post.toObject();
+            let postCustom = post.toObject();
             if (post) {
                 catalog.findOne({ 'catalogId': post.catalogId }).exec(function (err, catalog) {
                     if (catalog) {
@@ -85,7 +85,7 @@ router.put('/update-by-id/:id', requireAuth, (req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
 
-    var post = {
+    let post = {
         imagePath: req.body.imagePath,
         title: req.body.title,
         categoryId: req.body.categoryId,
@@ -134,12 +134,14 @@ router.post("/search-posts/", async function (req, res) {
         page: parseInt(page, 10) || 1,
         perPage: parseInt(perPage, 10) || 20,
     };
-    var query = {};
-    var isExistCategorySearch = false;
-    for (var key in req.body) { //could also be req.query and req.params
+    let query = {};
+    let isExistCategorySearch = false;
+    let isExistKey = false;
+    for (let key in req.body) { //could also be req.query and req.params
         if (!global.isNullOrUndefinedOrEmpty(req.body[key])) {
+            isExistKey = true;
             if (key === "provinceCityId" || key === "districtTownId") {
-                var keyAlterName = 'address' + '.' + key;
+                let keyAlterName = 'address' + '.' + key;
                 query[keyAlterName] = req.body[key];
             } else if (key !== "title" && key !== "") {
                 query[key] = req.body[key];
@@ -156,18 +158,18 @@ router.post("/search-posts/", async function (req, res) {
     if (isExistCategorySearch) {
         category.find({ parentId: req.body.categoryId }).select({ "categoryId": 1 }).exec(function (err, categories) {
             if (!err) {
-                var arrCategoryId = [];
+                let arrCategoryId = [];
                 arrCategoryId = categories.map(x => x.categoryId);
                 arrCategoryId.push(req.body.categoryId);
                 post.countDocuments().exec(function (err, count) {
-                    var totalPages = Math.ceil(count / options.perPage);
+                    let totalPages = Math.ceil(count / options.perPage);
                     post.find(query).where('categoryId').in(arrCategoryId)
                         .limit(options.perPage)
                         .skip(options.page * options.perPage)
                         .sort({ title: 'asc' })
                         .exec(function (err, posts) {
                             if (!err) {
-                                var objResult = {
+                                let objResult = {
                                     posts: posts,
                                     totalPages: totalPages
                                 }
@@ -184,11 +186,11 @@ router.post("/search-posts/", async function (req, res) {
         });
     } else {
         post.countDocuments().exec(function (err, count) {
-            var totalPages = Math.ceil(count / options.perPage);
+            let totalPages = Math.ceil(count / options.perPage);
             if (Object.keys(query).length) {
                 post.find(query).exec(function (err, posts) {
                     if (!err) {
-                        var objResult = {
+                        let objResult = {
                             posts: posts,
                             totalPages: totalPages
                         }
@@ -200,7 +202,7 @@ router.post("/search-posts/", async function (req, res) {
             }else{
                 post.find().exec(function (err, posts) {
                     if (!err) {
-                        var objResult = {
+                        let objResult = {
                             posts: posts,
                             totalPages: totalPages
                         }
