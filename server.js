@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const flash = require('connect-flash');
 const session = require('express-session');
 const passport = require('passport');
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 const cors = require('cors');
 const validatorOptions = {
 

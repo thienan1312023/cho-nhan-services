@@ -5,14 +5,14 @@ var Category = require('../../models/category')
 
 // create catalog
 router.post('/add-category', (req, res) => {
-    
+
     var categoryNew = new Category({
         categoryName: req.body.categoryName,
         parentId: req.body.parentId
     });
     categoryNew.save((err, doc) => {
-        if (!err) { 
-            res.send(doc); 
+        if (!err) {
+            res.send(doc);
             console.log("Save successfully");
         }
         else { console.log('Error in Category Save :' + JSON.stringify(err, undefined, 2)); }
@@ -22,13 +22,13 @@ router.post('/add-category', (req, res) => {
 router.get('/', (req, res) => {
     Category.find((err, docs) => {
         if (!err) {
-             res.send(docs); 
+            res.send(docs);
         }
-        else { 
-            console.log('Error in Retriving Category :' + JSON.stringify(err, undefined, 2)); 
+        else {
+            console.log('Error in Retriving Category :' + JSON.stringify(err, undefined, 2));
         }
     });
-    
+
 });
 
 router.get('/:id', (req, res) => {
@@ -64,6 +64,33 @@ router.delete('/:id', (req, res) => {
     Category.findByIdAndRemove(req.params.id, (err, doc) => {
         if (!err) { res.send(doc); }
         else { console.log('Error in Category Delete :' + JSON.stringify(err, undefined, 2)); }
+    });
+});
+
+// get 8 newest items
+router.post('/change-parent', (req, res) => {
+    Category.find().exec(async function (err, categorys) {
+        if (!err) {
+            let arrResult = [];
+            for (let i = 9; i < categorys.length; i++) {
+                let category_found = categorys.find(function (category) {
+                    return category.categoryId === categorys[i - 1].parentId;
+                });
+                if (category_found.parentId !== 0) {
+                    let item = { ...categorys[i - 1] };
+                    item._doc.parentId = [];
+                    item._doc.parentId.push[item._doc.parentId];
+                    item._doc.parentId.push[category_found.parentId];
+                    arrResult.push(item._doc);
+                    await Category.findOneAndUpdate({ 'categoryId': item._doc.categoryId }, { 'highLevelArr': item._doc.parentId });
+                }
+
+            }
+            res.send(arrResult);
+        }
+        else {
+            console.log('Error in Retriving category :' + JSON.stringify(err, undefined, 2));
+        }
     });
 });
 

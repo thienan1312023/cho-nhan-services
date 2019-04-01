@@ -199,7 +199,8 @@ router.post("/search-posts/", async function (req, res) {
                         console.log('Error in Retriving post :' + JSON.stringify(err, undefined, 2));
                     }
                 });
-            }else{
+
+            } else {
                 post.find().exec(function (err, posts) {
                     if (!err) {
                         let objResult = {
@@ -216,7 +217,5 @@ router.post("/search-posts/", async function (req, res) {
     }
 
 });
-
-
 
 module.exports = router;
