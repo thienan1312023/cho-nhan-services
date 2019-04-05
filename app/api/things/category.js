@@ -68,30 +68,54 @@ router.delete('/:id', (req, res) => {
 });
 
 // get 8 newest items
-router.post('/change-parent', (req, res) => {
-    Category.find().exec(async function (err, categorys) {
-        if (!err) {
-            let arrResult = [];
-            for (let i = 9; i < categorys.length; i++) {
-                let category_found = categorys.find(function (category) {
-                    return category.categoryId === categorys[i - 1].parentId;
-                });
-                if (category_found.parentId !== 0) {
+router.post('/change-parent', async (req, res) => {
+    categorys = await Category.find();
+    if (categorys) {
+        for (let i = 9; i < categorys.length; i++) {
+            let category_found = categorys.find(function (category) {
+                return category.categoryId === categorys[i - 1].parentId;
+            });
+            if (category_found) {
+                if (category_found.parentId !== 0 && category_found.parentId) {
+                    let arrHighLevelResult = [];
                     let item = { ...categorys[i - 1] };
-                    item._doc.parentId = [];
-                    item._doc.parentId.push[item._doc.parentId];
-                    item._doc.parentId.push[category_found.parentId];
-                    arrResult.push(item._doc);
-                    await Category.findOneAndUpdate({ 'categoryId': item._doc.categoryId }, { 'highLevelArr': item._doc.parentId });
+                    arrHighLevelResult.push(item._doc.parentId);
+                    // await Category.findByIdAndUpdate(item._doc._id,
+                    //     { "$push": { highLevelArr: item._doc.parentId } },
+                    //     { "new": true, "upsert": true }
+                    // );
+                    arrHighLevelResult.push(category_found.parentId);
+                    await Category.findByIdAndUpdate(item._doc._id,
+                        { $push: {highLevels:  {$each:[2,3]}}},
+                        { new: true, upsert: true }
+                    );
+                    // Category.findOneAndUpdate({ categoryId: item._doc.categoryId }, {$set: { highLevelArr: arrHighLevelResult }}).exec(function(err, res){
+                    //     if(!err){
+                    //         console.log('category updated');
+                    //     }else{
+                    //         console.log('category error');
+                    //     }
+                    // });
+                    // category = await Category.find({categoryId:item._doc.categoryId});
+                    // if(category){
+                    //     category.highLevelArr = arrHighLevelResult;
+                    //     category.save().then(function(err, result) {
+                    //         console.log('category Created');
+                    //     });
+                    // }else{
+                    //     console.log("error")
+                    // }
+                    
+                    //await Category.updateOne({categoryId: item._doc.categoryId }, {$set: { highLevelArr: arrHighLevelResult }});
                 }
-
             }
-            res.send(arrResult);
         }
-        else {
-            console.log('Error in Retriving category :' + JSON.stringify(err, undefined, 2));
-        }
-    });
+        res.send("dung roi haha");
+    }
+    else {
+        console.log('Error in Retriving category :' + JSON.stringify(err, undefined, 2));
+    }
 });
+
 
 module.exports = router;
