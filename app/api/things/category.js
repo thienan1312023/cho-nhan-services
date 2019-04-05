@@ -71,24 +71,40 @@ router.delete('/:id', (req, res) => {
 router.post('/change-parent', async (req, res) => {
     categorys = await Category.find();
     if (categorys) {
-        for (let i = 9; i < categorys.length; i++) {
-            let category_found = categorys.find(function (category) {
-                return category.categoryId === categorys[i - 1].parentId;
+        for (let i = 0; i < categorys.length; i++) {
+            // let category_found = categorys.find(function (category) {
+            //     return category.categoryId === categorys[i - 1].parentId;
+            // });
+            let curCategory = categorys[i];
+            let parentId = curCategory.parentId;
+            let category_found = await categorys.find(item => {
+                return item.categoryId == parentId && item._id != curCategory._id
             });
+
             if (category_found) {
-                if (category_found.parentId !== 0 && category_found.parentId) {
+                if (parentId !== 0) {
                     let arrHighLevelResult = [];
-                    let item = { ...categorys[i - 1] };
-                    arrHighLevelResult.push(item._doc.parentId);
+                    // let item = { ...categorys[i - 1] };
+                    // arrHighLevelResult.push(item._doc.parentId);
                     // await Category.findByIdAndUpdate(item._doc._id,
                     //     { "$push": { highLevelArr: item._doc.parentId } },
                     //     { "new": true, "upsert": true }
                     // );
-                    arrHighLevelResult.push(category_found.parentId);
-                    await Category.findByIdAndUpdate(item._doc._id,
-                        { $push: {highLevels:  {$each:[2,3]}}},
-                        { new: true, upsert: true }
-                    );
+                    arrHighLevelResult.push(2);
+                    // await Category.findByIdAndUpdate(item._doc._id,
+                    //     { $push: {highLevels:  {$each:[2,3]}}},
+                    //     { new: true, upsert: true }
+                    // );
+
+                    let category = await Category.findById(curCategory._id);
+                    let objUpdate = {
+                        upsert: true,
+                        new: true,
+                        highLevelArr: arrHighLevelResult
+                    }
+                    category.set(objUpdate);
+                    await category.save();
+
                     // Category.findOneAndUpdate({ categoryId: item._doc.categoryId }, {$set: { highLevelArr: arrHighLevelResult }}).exec(function(err, res){
                     //     if(!err){
                     //         console.log('category updated');
