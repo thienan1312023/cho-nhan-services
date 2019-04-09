@@ -218,4 +218,19 @@ router.post("/search-posts/", async function (req, res) {
 
 });
 
+// get 8 newest items
+router.post('/change-posts', async (req, res) => {
+    let posts = await post.find();
+    if (posts) {
+        for (let i = 0; i < posts.length; i++) {
+            let _categoryId = posts[i].categoryId;
+            const _category = await category.findOne({ categoryId: _categoryId });
+            await post.updateOne({_id: posts[i]._id}, {highLevelArr: _category.highLevelArr});
+        }
+        console.log("done");
+        res.send("xong roi do ba");
+    }
+});
+
+
 module.exports = router;
