@@ -71,30 +71,22 @@ router.delete('/:id', (req, res) => {
 router.post('/change-parent', async (req, res) => {
     categorys = await Category.find();
     if (categorys) {
+        let arrHighLevelResult = [];
         for (let i = 0; i < categorys.length; i++) {
-            // let category_found = categorys.find(function (category) {
-            //     return category.categoryId === categorys[i - 1].parentId;
-            // });
             let curCategory = categorys[i];
             let parentId = curCategory.parentId;
-            let category_found = await categorys.find(item => {
+            let category_parent_found = await categorys.find(item => {
                 return item.categoryId == parentId && item._id != curCategory._id
             });
 
-            if (category_found) {
+            if (category_parent_found) {
                 if (parentId !== 0) {
-                    let arrHighLevelResult = [];
-                    // let item = { ...categorys[i - 1] };
-                    // arrHighLevelResult.push(item._doc.parentId);
-                    // await Category.findByIdAndUpdate(item._doc._id,
-                    //     { "$push": { highLevelArr: item._doc.parentId } },
-                    //     { "new": true, "upsert": true }
-                    // );
-                    arrHighLevelResult.push(2);
-                    // await Category.findByIdAndUpdate(item._doc._id,
-                    //     { $push: {highLevels:  {$each:[2,3]}}},
-                    //     { new: true, upsert: true }
-                    // );
+                    arrHighLevelResult = [];
+                    if (category_parent_found.highLevelArr.length > 0) {
+                        arrHighLevelResult = category_parent_found.highLevelArr;
+                    }
+                    arrHighLevelResult.push(parentId);
+                    category_parent_found.highLevelArr.length == 0 && parentId !== 0 && arrHighLevelResult.push(category_parent_found.parentId);
 
                     let category = await Category.findById(curCategory._id);
                     let objUpdate = {
@@ -104,25 +96,6 @@ router.post('/change-parent', async (req, res) => {
                     }
                     category.set(objUpdate);
                     await category.save();
-
-                    // Category.findOneAndUpdate({ categoryId: item._doc.categoryId }, {$set: { highLevelArr: arrHighLevelResult }}).exec(function(err, res){
-                    //     if(!err){
-                    //         console.log('category updated');
-                    //     }else{
-                    //         console.log('category error');
-                    //     }
-                    // });
-                    // category = await Category.find({categoryId:item._doc.categoryId});
-                    // if(category){
-                    //     category.highLevelArr = arrHighLevelResult;
-                    //     category.save().then(function(err, result) {
-                    //         console.log('category Created');
-                    //     });
-                    // }else{
-                    //     console.log("error")
-                    // }
-                    
-                    //await Category.updateOne({categoryId: item._doc.categoryId }, {$set: { highLevelArr: arrHighLevelResult }});
                 }
             }
         }
