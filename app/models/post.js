@@ -17,6 +17,7 @@ var PostSchema = new Schema({
     categoryId: {type: String, required: false},
     catalogId: {type: Number, required: true, ref:'catalog', required: true},
     postStatus: {type: String, required: true, tolowercase: true},
+    highLevelArr: {type: Array, required: false},
     createdBy: {type: String,  required: true},
     updatedBy: {type: String, required: false},
     createdAt:{type: Date, default: Date.now(),required: true},
