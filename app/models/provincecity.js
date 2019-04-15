@@ -7,5 +7,7 @@ var ProvincecitySchema = new Schema({
     CountryId:{type: Number, required: true}
 });
 
+ProvincecitySchema.index({ProvinceCityName: "text"});
+
 module.exports = mongoose.model('Provincecity', ProvincecitySchema);
 

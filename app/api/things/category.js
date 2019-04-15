@@ -1,7 +1,7 @@
 const express = require('express');
-var router = express.Router();
-var ObjectId = require('mongoose').Types.ObjectId;
-var Category = require('../../models/category')
+const router = express.Router();
+const ObjectId = require('mongoose').Types.ObjectId;
+const Category = require('../../models/category')
 
 // create catalog
 router.post('/add-category', (req, res) => {

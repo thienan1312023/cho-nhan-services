@@ -7,4 +7,5 @@ router.use('/category', require('./things/category'));
 router.use('/post', require('./things/post'));
 router.use('/user', require('./user/user'));
 router.use('/address', require('./things/address'));
+router.use('/loadPage', require('./things/loadPage'));
 module.exports = router;

@@ -1,6 +1,6 @@
 const express = require('express');
-var router = express.Router();
-var Province  = require('../../models/provincecity');
+const router = express.Router();
+const Province  = require('../../models/provincecity');
 
 router.get('/get-all-provincecity', (req, res) => {
     Province.find((err, docs) => {

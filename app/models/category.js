@@ -20,5 +20,6 @@ CategorySchema.plugin(autoIncrement.plugin, {
   startAt: 1,
   incrementBy: 1
 });
+CategorySchema.index({categoryName: "text"});
 module.exports = mongoose.model('Category', CategorySchema);
 

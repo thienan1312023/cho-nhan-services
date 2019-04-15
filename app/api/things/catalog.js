@@ -1,7 +1,7 @@
 const express = require('express');
-var router = express.Router();
-var ObjectId = require('mongoose').Types.ObjectId;
-var Catalog  = require('../../models/catalog');
+const router = express.Router();
+const ObjectId = require('mongoose').Types.ObjectId;
+const Catalog  = require('../../models/catalog');
 const requireAuth = require('../../middlewares/require_authentication');
 router.get('/get-all-catalogs', (req, res) => {
     Catalog.find((err, docs) => {
