@@ -15,7 +15,7 @@ router.get('/search-load-page', async (req, res) => {
     }else{
         res.send(result);
     }
-     
+    
 });
 module.exports = router;
 
