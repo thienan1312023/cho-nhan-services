@@ -130,7 +130,7 @@ router.get('/get-similar-posts/:id', (req, res) => {
 });
 
 router.post("/search-posts/", async function (req, res) {
-    const result = await postController.searchPosts(req);
+    const result = await postController.searchPosts(req.body, req.query);
     if(result){
         res.send(result);
     }else{
