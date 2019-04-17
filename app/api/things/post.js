@@ -131,25 +131,49 @@ router.get('/get-similar-posts/:id', (req, res) => {
 
 router.post("/search-posts/", async function (req, res) {
     const result = await postController.searchPosts(req.body, req.query);
-    if(result){
+    if (result) {
         res.send(result);
-    }else{
+    } else {
         res.status(500).send('Error while search posts');
     }
 });
 
 // get 8 newest items
+// router.post('/change-posts', async (req, res) => {
+//     let posts = await post.find();
+//     if (posts) {
+//         for (let i = 0; i < posts.length; i++) {
+//             let _categoryId = posts[i].categoryId;
+//             const _category = await category.findOne({ categoryId: _categoryId });
+//             await post.updateOne({_id: posts[i]._id}, {highLevelArr: _category.highLevelArr});
+//         }
+//         console.log("done");
+//         res.send("xong roi do ba");
+//     }
+// });
+
 router.post('/change-posts', async (req, res) => {
-    let posts = await post.find();
+    let posts = await post.find().exec();
     if (posts) {
-        for (let i = 0; i < posts.length; i++) {
-            let _categoryId = posts[i].categoryId;
-            const _category = await category.findOne({ categoryId: _categoryId });
-            await post.updateOne({_id: posts[i]._id}, {highLevelArr: _category.highLevelArr});
+        for (const postItem of posts) {
+            if (postItem && postItem.address) {
+                let address = {
+                    "countryId": String(postItem.address.countryId),
+                    "provinceCityId": String(postItem.address.provinceCityId),
+                    "districtTownId": String(postItem.address.districtTownId),
+                    "communeWardId": String(postItem.address.communeWardId)
+                }
+                await post.updateOne({ _id: postItem._id }, {
+                    "$set": {
+                        "address": address
+                    }
+                }).exec();
+                console.log(postItem);
+            }
         }
-        console.log("done");
-        res.send("xong roi do ba");
     }
+    console.log("done");
+    res.send("xong roi do ba");
 });
 
 

@@ -14,7 +14,7 @@ var PostSchema = new Schema({
     phoneNumber: {type: String, required: true},
     address: {type: Object, required: true},
     note: {type: String, required: true},
-    categoryId: {type: String, required: false},
+    categoryId: {type: Number, required: true},
     catalogId: {type: Number, required: true, ref:'catalog', required: true},
     postStatus: {type: String, required: true, tolowercase: true},
     highLevelArr: {type: Array, required: false},
