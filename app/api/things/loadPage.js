@@ -3,7 +3,7 @@ const router = express.Router();
 const Category = require('../../models/category');
 const ProvinceCity = require('../../models/provincecity');
 const postsController = require('../../controllers/posts-controller');
-router.get('/search-load-page', async (req, res) => {
+router.post('/search-load-page', async (req, res) => {
     let categoryRes = await Category.findOne({ $text: { $search: req.body.categorySearch } });
     let provinceCityRes = await ProvinceCity.findOne({ $text: { $search: req.body.provinceCity } });
     let result = {
@@ -18,8 +18,6 @@ router.get('/search-load-page', async (req, res) => {
             highLevelArr: result.category.categoryId,
             provinceCityId: result.provinceCity.ProvinceCityId
         };
-        // body["categoryId"] = result.category.categoryId;
-        // body["provinceCityId"] = result.provinceCity.ProvinceCityId;
         const postsResult = await postsController.searchPosts(body);
         if (postsResult) {
             res.send(postsResult);
