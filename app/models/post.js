@@ -1,10 +1,7 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var validate = require('mongoose-validator');
-var user = require('./user');// create catalog
-var user = require('./catalog');// create catalog
-var mongoosePaginate = require('mongoose-paginate');
-var PostSchema = new Schema({
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
+const mongoosePaginate = require('mongoose-paginate');
+const PostSchema = new Schema({
     user: {type: Schema.Types.ObjectId, ref: 'user', required: true},
     postType: {type: String, required: true, lowercase: true},
     userType: {type: String, required: true, lowercase: true},

@@ -17,7 +17,7 @@ router.get('/get-all-catalogs', (req, res) => {
 // create catalog
 router.post('/add-catalog', requireAuth,  (req, res) => {
     
-    var catalogNew = new Catalog({
+    const catalogNew = new Catalog({
         catalogId: req.body.catalogId,
         catalogName: req.body.catalogName,
         imagePath: req.body.imagePath
@@ -42,7 +42,7 @@ router.get('/:id', (req, res) => {
 router.put('/:id', requireAuth, async(req, res) => {
     if (!ObjectId.isValid(req.params.id))
         return res.status(400).send(`No record with given id : ${req.params.id}`);
-        var ExistProduct = await Catalog.findById(req.params.id);
+        const ExistProduct = await Catalog.findById(req.params.id);
         if(ExistProduct){
             const error = new Error(`<span>${req.body.title}</span> product already exists`);
             error.status = 400;
