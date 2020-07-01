@@ -8,10 +8,10 @@ const signupValidator = require('../../shared/validations/signup');
 const router = express.Router();
 
 router.post('/signup', (req, res, next) => {
-  const { isValid, errors } = signupValidator(req.body);
-  if (!isValid) {
-    return res.status(400).json({ error: true, errors });
-  }
+  // const { isValid, errors } = signupValidator(req.body);
+  // if (!isValid) {
+  //   return res.status(400).json({ error: true, errors });
+  // }
   var userNew = new User({
     lastName: req.body.lastName,
     firstName: req.body.firstName,
